@@ -21,7 +21,8 @@
       imageUrl:
         "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80",
       address: "Escuela De Educación Media, Palos 210, C1160 ACB, Buenos Aires",
-      contactEmail: "code@test.com"
+      contactEmail: "code@test.com",
+      isFavorite: false
     },
     {
       id: "m2",
@@ -31,7 +32,8 @@
       imageUrl:
         "https://images.unsplash.com/photo-1517508601843-6db360377d23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80",
       address: "Badwater Basin, Death Valley, California",
-      contactEmail: "run@test.com"
+      contactEmail: "run@test.com",
+      isFavorite: false
     }
   ];
 
@@ -47,6 +49,16 @@
     };
 
     meetups = [newMeetup, ...meetups];
+  }
+
+  function toggleFavorite(event) {
+    const id = event.detail;
+    const updatedMeetup = {...meetups.find(m => m.id === id)};
+    updatedMeetup.isFavorite = !updatedMeetup.isFavorite;
+    const meetupIndex = meetups.findIndex(m => m.id === id)
+    const updatedMeetups = [...meetups];
+    updatedMeetups[meetupIndex] = updatedMeetup;
+    meetups = updatedMeetups;
   }
 </script>
 
@@ -70,26 +82,22 @@
       id="title"
       label="Title"
       value={title}
-      on:input={event => title = event.target.value}
-      type="text" />
+      on:input={event => title = event.target.value} />
     <TextInput
       id="subtitle"
       label="Subtitle"
       value={subtitle}
-      on:input={event => subtitle = event.target.value}
-      type="text" />
+      on:input={event => subtitle = event.target.value} />
     <TextInput
       id="address"
       label="Address"
       value={address}
-      on:input={event => address = event.target.value}
-      type="text" />
+      on:input={event => address = event.target.value} />
     <TextInput
       id="imageUrl"
       label="Image URL"
       value={imageUrl}
-      on:input={event => imageUrl = event.target.value}
-      type="text" />
+      on:input={event => imageUrl = event.target.value} />
     <TextInput
       id="email"
       label="E-mail"
@@ -102,9 +110,8 @@
       label="Description"
       value={description}
       on:input={event => description = event.target.value}
-      type="text"
       rows="3" />
     <Button type="submit" caption="Save" />
   </form>
-  <MeetupGrid {meetups} />
+  <MeetupGrid {meetups} on:togglefavorite="{toggleFavorite}" />
 </main>
