@@ -33,25 +33,31 @@
 
   let editMode;
 
-  function addMeetup() {
+  function addMeetup(event) {
     const newMeetup = {
       id: Math.random().toString(),
-      title: title,
-      subtitle: subtitle,
-      imageUrl: imageUrl,
-      description: description,
-      contactEmail: email,
-      address: address
+      title: event.detail.title,
+      subtitle: event.detail.subtitle,
+      imageUrl: event.detail.imageUrl,
+      description: event.detail.description,
+      contactEmail: event.detail.email,
+      address: event.detail.address
     };
 
     meetups = [newMeetup, ...meetups];
+
+    editMode = null;
+  }
+
+  function cancelEdit() {
+    editMode = null;
   }
 
   function toggleFavorite(event) {
     const id = event.detail;
-    const updatedMeetup = {...meetups.find(m => m.id === id)};
+    const updatedMeetup = { ...meetups.find(m => m.id === id) };
     updatedMeetup.isFavorite = !updatedMeetup.isFavorite;
-    const meetupIndex = meetups.findIndex(m => m.id === id)
+    const meetupIndex = meetups.findIndex(m => m.id === id);
     const updatedMeetups = [...meetups];
     updatedMeetups[meetupIndex] = updatedMeetup;
     meetups = updatedMeetups;
@@ -62,14 +68,20 @@
   main {
     margin-top: 5rem;
   }
+
+  .meetup-controls {
+    margin: 1rem;
+  }
 </style>
 
 <Header />
 
 <main>
-  <Button caption="New Meetup" on:click="{() => editMode = 'add'}" />
+  <div class="meetup-controls">
+    <Button on:click={() => (editMode = 'add')}>New Meetup</Button>
+  </div>
   {#if editMode === 'add'}
-    <EditMeetup />
+    <EditMeetup on:save="{addMeetup}" on:cancel={cancelEdit} />
   {/if}
-  <MeetupGrid {meetups} on:togglefavorite="{toggleFavorite}" />
+  <MeetupGrid {meetups} on:togglefavorite={toggleFavorite} />
 </main>
