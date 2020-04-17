@@ -1,4 +1,5 @@
 <script>
+  import meetups from './meetup-store.js';
   import { createEventDispatcher } from "svelte";
   import TextInput from "../UI/TextInput.svelte";
   import Button from "../UI/Button.svelte";
