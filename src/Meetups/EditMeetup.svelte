@@ -6,12 +6,28 @@
   import Modal from "../UI/Modal.svelte";
   import { isEmpty, isValidEmail } from "../helpers/validation.js";
 
+  export let id = null;
+
   let title = "";
   let subtitle = "";
   let address = "";
   let email = "";
   let imageUrl = "";
   let description = "";
+
+  if (id) {
+    const unsubscribe = meetups.subscribe(items => {
+      const selectedMeetup = items.find(i => i.id === id);
+      title = selectedMeetup.title;
+      subtitle = selectedMeetup.subtitle;
+      address = selectedMeetup.address;
+      email = selectedMeetup.contactEmail;
+      imageUrl = selectedMeetup.imageUrl;
+      description = selectedMeetup.description;
+    });
+
+    unsubscribe();
+  }
 
   const dispatch = createEventDispatcher();
 
@@ -39,8 +55,17 @@
       address
     };
 
-    meetups.addMeetup(newMeetup);
+    if (id) {
+      meetups.updateMeetup(id, newMeetup);
+    } else {
+      meetups.addMeetup(newMeetup);
+    }
 
+    dispatch("save");
+  }
+
+  function deleteMeetup() {
+    meetups.removeMeetup(id);
     dispatch("save");
   }
 
@@ -105,5 +130,8 @@
   <div slot="footer">
     <Button mode="outline" on:click={cancel}>Cancel</Button>
     <Button on:click={submitForm} disabled={!formIsValid}>Save</Button>
+    {#if id}
+      <Button on:click={deleteMeetup}>Delete</Button>
+    {/if}
   </div>
 </Modal>
