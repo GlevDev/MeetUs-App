@@ -12,6 +12,21 @@
   let page = "overview";
   let pageData = {};
 
+  fetch('https://svelte-course-4e0aa.firebaseio.com/meetups.json').then(res => {
+    if(!res.ok) {
+      throw new Error("Fetching meetups failed, please try again later!")
+    }
+    return res.json();
+  }).then(data => {
+    const loadedMeetups = [];
+    for (const key in data) {
+      loadedMeetups.push({...data[key], id: key})
+    }
+    meetups.setMeetups(loadedMeetups);
+  }).catch(err => {
+    console.log(err)
+  })
+
   function savedMeetup(event) {
     editMode = null;
     editedId = null;
