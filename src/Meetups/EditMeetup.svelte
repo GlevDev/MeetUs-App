@@ -56,30 +56,57 @@
     };
 
     if (id) {
-      meetups.updateMeetup(id, newMeetup);
+      fetch(`https://svelte-course-4e0aa.firebaseio.com/meetups/${id}.json`, {
+        method: "PATCH",
+        body: JSON.stringify(newMeetup),
+        headers: { "Content-Type": "application/json" }
+      })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("An error occurred, please try again!");
+          }
+          meetups.updateMeetup(id, newMeetup);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     } else {
       fetch("https://svelte-course-4e0aa.firebaseio.com/meetups.json", {
-        method: 'POST',
-        body: JSON.stringify({...newMeetup, isFavorite: false}),
-        headers: { 'Content-Type': 'application/json'}
-      }).then(res => {
-        if(!res.ok) {
-          throw new Error('An error occurred, please try again!');
-        }
-        return res.json();
-      }).then(data => {
-        meetups.addMeetup({...newMeetup, isFavorite: false, id: data.name});
-      }).catch(err => {
-        console.log(err)
+        method: "POST",
+        body: JSON.stringify({ ...newMeetup, isFavorite: false }),
+        headers: { "Content-Type": "application/json" }
       })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("An error occurred, please try again!");
+          }
+          return res.json();
+        })
+        .then(data => {
+          meetups.addMeetup({ ...newMeetup, isFavorite: false, id: data.name });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
 
     dispatch("save");
   }
 
   function deleteMeetup() {
-    meetups.removeMeetup(id);
-    dispatch("save");
+    fetch(`https://svelte-course-4e0aa.firebaseio.com/meetups/${id}.json`, {
+      method: "DELETE"
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("An error occurred, please try again!");
+      }
+      meetups.removeMeetup(id);
+      dispatch("save");
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
 
   function cancel() {
